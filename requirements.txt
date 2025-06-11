@@ -1,0 +1,4 @@
+# Aquí puedes listar las dependencias del proyecto
+# Ejemplo:
+# flask==3.0.0
+# python-dotenv==1.0.0

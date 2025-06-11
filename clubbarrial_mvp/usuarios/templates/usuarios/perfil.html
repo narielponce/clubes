@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}Mi Perfil - Club Barrial{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="bg-white shadow rounded-lg p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Mi Perfil</h1>
+                <p class="text-gray-600">{{ usuario.get_role_display_name }}</p>
+            </div>
+            <div class="flex space-x-3">
+                <a href="{% url 'usuarios:editar_perfil' %}" 
+                   class="bg-club-primary text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+                    Editar Perfil
+                </a>
+                <a href="{% url 'usuarios:dashboard' %}" 
+                   class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors">
+                    Volver al Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información Personal -->
+    <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-lg font-medium text-gray-900 mb-6">Información Personal</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-500">Nombre de Usuario</label>
+                <p class="mt-1 text-sm text-gray-900">{{ usuario.username }}</p>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-500">Nombre Completo</label>
+                <p class="mt-1 text-sm text-gray-900">
+                    {{ usuario.get_full_name|default:"No especificado" }}
+                </p>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-500">Email</label>
+                <p class="mt-1 text-sm text-gray-900">{{ usuario.email|default:"No especificado" }}</p>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-500">DNI</label>
+                <p class="mt-1 text-sm text-gray-900">{{ usuario.dni|default:"No especificado" }}</p>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-500">Fecha de Nacimiento</label>
+                <p class="mt-1 text-sm text-gray-900">
+                    {{ usuario.fecha_nacimiento|date:"d/m/Y"|default:"No especificado" }}
+                </p>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-500">Teléfono</label>
+                <p class="mt-1 text-sm text-gray-900">{{ usuario.telefono|default:"No especificado" }}</p>
+            </div>
+        </div>
+        
+        <div class="mt-6">
+            <label class="block text-sm font-medium text-gray-500">Dirección</label>
+            <p class="mt-1 text-sm text-gray-900">{{ usuario.direccion|default:"No especificado" }}</p>
+        </div>
+    </div>
+
+    <!-- Información de Contacto de Emergencia -->
+    <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-lg font-medium text-gray-900 mb-6">Contacto de Emergencia</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-500">Contacto de Emergencia</label>
+                <p class="mt-1 text-sm text-gray-900">{{ usuario.contacto_emergencia|default:"No especificado" }}</p>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-500">Teléfono de Emergencia</label>
+                <p class="mt-1 text-sm text-gray-900">{{ usuario.telefono_emergencia|default:"No especificado" }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información del Club -->
+    <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-lg font-medium text-gray-900 mb-6">Información del Club</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-500">Rol</label>
+                <span class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    {{ usuario.get_role_display_name }}
+                </span>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-500">Fecha de Ingreso</label>
+                <p class="mt-1 text-sm text-gray-900">{{ usuario.fecha_ingreso|date:"d/m/Y" }}</p>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-500">Estado</label>
+                {% if usuario.activo %}
+                    <span class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        Activo
+                    </span>
+                {% else %}
+                    <span class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        Inactivo
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Disciplinas (si es coordinador) -->
+    {% if usuario.role == 'coordinador' %}
+    <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-lg font-medium text-gray-900 mb-6">Disciplinas que Coordino</h2>
+        
+        {% if usuario.disciplinas.exists %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for disciplina in usuario.disciplinas.all %}
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="font-medium text-gray-900">{{ disciplina.nombre }}</h3>
+                        <p class="text-sm text-gray-500 mt-1">
+                            {{ disciplina.jugadores.count }} jugador{{ disciplina.jugadores.count|pluralize:"es" }}
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-gray-500">No coordinas ninguna disciplina actualmente.</p>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

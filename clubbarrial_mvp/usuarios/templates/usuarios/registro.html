@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+{% block title %}Registro - Club Barrial{% endblock %}
+
+{% block content %}
+<div class="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow">
+        <div class="mb-8">
+            <h2 class="text-center text-3xl font-extrabold text-gray-900">
+                Registro de Usuario
+            </h2>
+            <p class="mt-2 text-center text-sm text-gray-600">
+                ¿Ya tienes una cuenta?
+                <a href="{% url 'usuarios:login' %}" class="font-medium text-club-primary hover:text-blue-500">
+                    Inicia sesión
+                </a>
+            </p>
+        </div>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+
+            {% if form.errors %}
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <p class="text-sm">{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Información básica -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-medium text-gray-900">Información básica</h3>
+                    
+                    <div>
+                        <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            Usuario
+                        </label>
+                        <input type="text" 
+                               name="{{ form.username.name }}" 
+                               id="{{ form.username.id_for_label }}" 
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-club-primary focus:border-club-primary sm:text-sm"
+                               required>
+                    </div>
+
+                    <div>
+                        <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            Nombre
+                        </label>
+                        <input type="text" 
+                               name="{{ form.first_name.name }}" 
+                               id="{{ form.first_name.id_for_label }}" 
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-club-primary focus:border-club-primary sm:text-sm"
+                               required>
+                    </div>
+
+                    <div>
+                        <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            Apellido
+                        </label>
+                        <input type="text" 
+                               name="{{ form.last_name.name }}" 
+                               id="{{ form.last_name.id_for_label }}" 
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-club-primary focus:border-club-primary sm:text-sm"
+                               required>
+                    </div>
+
+                    <div>
+                        <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            Email
+                        </label>
+                        <input type="email" 
+                               name="{{ form.email.name }}" 
+                               id="{{ form.email.id_for_label }}" 
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-club-primary focus:border-club-primary sm:text-sm"
+                               required>
+                    </div>
+                </div>
+
+                <!-- Información de contacto -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-medium text-gray-900">Información de contacto</h3>
+                    
+                    <div>
+                        <label for="{{ form.dni.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            DNI
+                        </label>
+                        <input type="text" 
+                               name="{{ form.dni.name }}" 
+                               id="{{ form.dni.id_for_label }}" 
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-club-primary focus:border-club-primary sm:text-sm">
+                    </div>
+
+                    <div>
+                        <label for="{{ form.telefono.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            Teléfono
+                        </label>
+                        <input type="tel" 
+                               name="{{ form.telefono.name }}" 
+                               id="{{ form.telefono.id_for_label }}" 
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-club-primary focus:border-club-primary sm:text-sm">
+                    </div>
+
+                    <div>
+                        <label for="{{ form.direccion.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            Dirección
+                        </label>
+                        <textarea name="{{ form.direccion.name }}" 
+                                  id="{{ form.direccion.id_for_label }}" 
+                                  rows="2"
+                                  class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-club-primary focus:border-club-primary sm:text-sm"></textarea>
+                    </div>
+
+                    <div>
+                        <label for="{{ form.fecha_nacimiento.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            Fecha de Nacimiento
+                        </label>
+                        <input type="date" 
+                               name="{{ form.fecha_nacimiento.name }}" 
+                               id="{{ form.fecha_nacimiento.id_for_label }}" 
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-club-primary focus:border-club-primary sm:text-sm">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contraseña -->
+            <div class="space-y-4 mt-6">
+                <h3 class="text-lg font-medium text-gray-900">Contraseña</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            Contraseña
+                        </label>
+                        <input type="password" 
+                               name="{{ form.password1.name }}" 
+                               id="{{ form.password1.id_for_label }}" 
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-club-primary focus:border-club-primary sm:text-sm"
+                               required>
+                    </div>
+
+                    <div>
+                        <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            Confirmar Contraseña
+                        </label>
+                        <input type="password" 
+                               name="{{ form.password2.name }}" 
+                               id="{{ form.password2.id_for_label }}" 
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-club-primary focus:border-club-primary sm:text-sm"
+                               required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <button type="submit" 
+                        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-club-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-club-primary">
+                    Registrarse
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

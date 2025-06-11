@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Club Barrial MVP{% endblock %}</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configuración personalizada de Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'club-primary': '#1e40af',
+                        'club-secondary': '#64748b',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <a href="{% url 'home' %}" class="text-2xl font-bold text-club-primary hover:text-blue-700">
+                    Club Barrial
+                </a>
+                <nav class="flex items-center space-x-4">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'disciplinas:lista_disciplinas' %}" class="text-gray-600 hover:text-club-primary transition-colors">Disciplinas</a>
+                        <a href="{% url 'usuarios:dashboard' %}" class="text-gray-600 hover:text-club-primary transition-colors">Dashboard</a>
+                        {% if user.role == 'admin' %}
+                            <a href="/admin/" class="text-gray-600 hover:text-club-primary transition-colors">Admin</a>
+                            <a href="{% url 'usuarios:lista_usuarios' %}" class="text-gray-600 hover:text-club-primary transition-colors">Usuarios</a>
+                        {% endif %}
+                        <div class="relative group">
+                            <button class="flex items-center text-gray-600 hover:text-club-primary transition-colors">
+                                <span>{{ user.get_full_name|default:user.username }}</span>
+                                <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden group-hover:block">
+                                <a href="{% url 'usuarios:perfil' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mi Perfil</a>
+                                <a href="{% url 'usuarios:editar_perfil' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Editar Perfil</a>
+                                <div class="border-t border-gray-100"></div>
+                                <a href="{% url 'usuarios:logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Cerrar Sesión</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'usuarios:login' %}" class="text-gray-600 hover:text-club-primary transition-colors">Iniciar Sesión</a>
+                        <a href="{% url 'usuarios:registro' %}" class="bg-club-primary text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">Registrarse</a>
+                    {% endif %}
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <p class="text-center text-gray-500 text-sm">© 2024 Club Barrial MVP</p>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Coordinador - Club Barrial{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header del Dashboard -->
+    <div class="bg-white shadow rounded-lg p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">
+                    Panel de Coordinación
+                </h1>
+                <p class="text-gray-600">{{ role_display }}</p>
+            </div>
+            <div class="flex space-x-3">
+                <a href="{% url 'usuarios:perfil' %}" 
+                   class="bg-club-primary text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+                    Ver Perfil
+                </a>
+                <a href="{% url 'usuarios:logout' %}" 
+                   class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors">
+                    Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Disciplinas Coordinadas -->
+    <div class="bg-white shadow rounded-lg p-6">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-lg font-medium text-gray-900">Mis Disciplinas</h2>
+            <a href="{% url 'disciplinas:lista_disciplinas' %}" 
+               class="text-sm text-club-primary hover:text-blue-700">
+                Ver todas las disciplinas
+            </a>
+        </div>
+
+        {% if disciplinas_coordinadas %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for disciplina in disciplinas_coordinadas %}
+                    <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-medium text-gray-900">{{ disciplina.nombre }}</h3>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                {{ disciplina.jugadores.count }} jugador{{ disciplina.jugadores.count|pluralize:"es" }}
+                            </span>
+                        </div>
+                        
+                        <!-- Acciones rápidas -->
+                        <div class="space-y-3">
+                            <a href="#" class="flex items-center text-sm text-gray-600 hover:text-club-primary">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                                </svg>
+                                Ver lista de jugadores
+                            </a>
+                            <a href="#" class="flex items-center text-sm text-gray-600 hover:text-club-primary">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                Gestionar horarios
+                            </a>
+                            <a href="#" class="flex items-center text-sm text-gray-600 hover:text-club-primary">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                                </svg>
+                                Enviar anuncio
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-12">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No coordinas ninguna disciplina</h3>
+                <p class="mt-1 text-sm text-gray-500">
+                    Contacta con un administrador para que te asigne disciplinas.
+                </p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Próximas Actividades -->
+    <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-lg font-medium text-gray-900 mb-6">Próximas Actividades</h2>
+        
+        <div class="text-center py-12 text-gray-500">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">Próximamente</h3>
+            <p class="mt-1 text-sm text-gray-500">
+                El calendario de actividades estará disponible pronto.
+            </p>
+        </div>
+    </div>
+
+    <!-- Acciones Rápidas -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white shadow rounded-lg p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Jugadores</h3>
+            <p class="text-sm text-gray-500 mb-4">Gestiona los jugadores de tus disciplinas</p>
+            <a href="#" class="text-club-primary hover:text-blue-700 text-sm font-medium">
+                Administrar jugadores →
+            </a>
+        </div>
+
+        <div class="bg-white shadow rounded-lg p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Asistencia</h3>
+            <p class="text-sm text-gray-500 mb-4">Registra la asistencia a entrenamientos</p>
+            <a href="#" class="text-club-primary hover:text-blue-700 text-sm font-medium">
+                Tomar asistencia →
+            </a>
+        </div>
+
+        <div class="bg-white shadow rounded-lg p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Comunicaciones</h3>
+            <p class="text-sm text-gray-500 mb-4">Envía mensajes a tus equipos</p>
+            <a href="#" class="text-club-primary hover:text-blue-700 text-sm font-medium">
+                Enviar mensaje →
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
