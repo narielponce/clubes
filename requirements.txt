@@ -1,0 +1,9 @@
+Django>=4.2,<5
+djangorestframework
+psycopg2-binary
+django-environ
+gunicorn
+whitenoise
+pytest-django      # para tests
+black
+flake8

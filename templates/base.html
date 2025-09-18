@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Gestión de Clubes{% endblock %}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+  <nav class="navbar is-light" role="navigation" aria-label="main navigation">
+    <div class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item">
+          {% if user.is_authenticated %}
+            <div class="buttons">
+              <a href="{% if request.club %}{% url 'club_logout' club_slug=request.club.subdomain %}{% else %}{% url 'logout' %}{% endif %}" class="button is-primary">
+                <strong>Cerrar Sesión ({{ user.username }})</strong>
+              </a>
+            </div>
+          {% else %}
+            <div class="buttons">
+              <a href="{% url 'login' %}" class="button is-light">
+                Iniciar Sesión
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <section class="section">
+    <div class="container">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="notification is-{{ message.tags }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {% block content %}
+      {% endblock %}
+    </div>
+  </section>
+</body>
+</html>

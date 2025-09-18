@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Seleccionar Club{% endblock %}
+
+{% block content %}
+  <div class="columns is-centered">
+    <div class="column is-half">
+      <div class="box">
+        <h1 class="title">Selecciona un Club</h1>
+        <p class="subtitle">Eres miembro de varios clubes. Por favor, elige a cuál quieres acceder.</p>
+        
+        <div class="menu">
+          <ul class="menu-list">
+            {% for membership in memberships %}
+              <li>
+                <a href="{% url 'club_home' club_slug=membership.club.subdomain %}">
+                  <strong>{{ membership.club.name }}</strong> (Rol: {{ membership.get_role_display }})
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if object %}Editar Socio{% else %}Nuevo Socio{% endif %} - {{ club.name }}{% endblock %}
+
+{% block content %}
+  <h1 class="title">{% if object %}Editar Socio{% else %}Agregar Nuevo Socio{% endif %}</h1>
+  <h2 class="subtitle">Club: {{ club.name }}</h2>
+
+  <div class="box">
+    <form method="post">
+      {% csrf_token %}
+      
+
+      <div class="field">
+        <label class="label">Nombres</label>
+        <div class="control">
+          {{ form.first_name }}
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Apellidos</label>
+        <div class="control">
+          {{ form.last_name }}
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Email</label>
+        <div class="control">
+          {{ form.email }}
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Teléfono</label>
+        <div class="control">
+          {{ form.phone_number }}
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Fecha de Nacimiento</label>
+        <div class="control">
+          {{ form.birth_date }}
+        </div>
+        <p class="help">Formato: AAAA-MM-DD</p>
+      </div>
+
+      <div class="field">
+        <label class="label">Fecha de Ingreso</label>
+        <div class="control">
+          {{ form.join_date }}
+        </div>
+        <p class="help">Formato: AAAA-MM-DD</p>
+      </div>
+
+      <div class="field">
+        <label class="label">Estado</label>
+        <div class="control">
+          <div class="select">
+            {{ form.status }}
+          </div>
+        </div>
+      </div>
+
+      {% if form.errors %}
+        <div class="notification is-danger is-light">
+          <strong>Por favor, corrige los siguientes errores:</strong>
+          <ul>
+          {% for field, errors in form.errors.items %}
+            <li><strong>{{ field }}:</strong> {{ errors|join:", " }}</li>
+          {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      <hr>
+
+      <div class="field is-grouped">
+        <div class="control">
+          <button type="submit" class="button is-success">Guardar Socio</button>
+        </div>
+        <div class="control">
+          <a href="{% url 'member_list' club_slug=club.subdomain %}" class="button is-light">Cancelar</a>
+        </div>
+      </div>
+    </form>
+  </div>
+
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Socios - {{ club.name }}{% endblock %}
+
+{% block content %}
+  <h1 class="title">Gestión de Socios de {{ club.name }}</h1>
+  <h2 class="subtitle">Listado de todos los socios del club.</h2>
+  
+  <a href="{% url 'member_create' club_slug=club.subdomain %}" class="button is-success mb-4">+ Agregar Socio</a>
+
+  <div class="box">
+    <table class="table is-fullwidth is-striped is-hoverable">
+      <thead>
+        <tr>
+          <th>N° de Socio</th>
+          <th>Nombre Completo</th>
+          <th>Email</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for member in members %}
+          <tr>
+            <td>{{ member.member_number }}</td>
+            <td>{{ member.full_name }}</td>
+            <td>{{ member.email|default:"-" }}</td>
+            <td>
+              <span class="tag is-light is-medium {% if member.status == 'ACTIVE' %}is-success{% elif member.status == 'INACTIVE' %}is-warning{% else %}is-danger{% endif %}">
+                {{ member.get_status_display }}
+              </span>
+            </td>
+            <td>
+              <div class="buttons are-small">
+                <a href="{% url 'member_update' club_slug=club.subdomain pk=member.pk %}" class="button is-info">Editar</a>
+                <a href="{% url 'member_delete' club_slug=club.subdomain pk=member.pk %}" class="button is-danger">Eliminar</a>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5" class="has-text-centered">No hay socios registrados en este club.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <a href="{% url 'dashboard' club_slug=club.subdomain %}" class="button is-light mt-4">Volver al Dashboard</a>
+{% endblock %}

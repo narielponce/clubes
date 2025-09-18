@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Generar Cuotas Masivas{% endblock %}
+
+{% block content %}
+  <div class="columns is-centered">
+    <div class="column is-half">
+      <div class="box">
+        <h1 class="title">Generar Cuotas Masivas</h1>
+        <p class="subtitle">Crea una nueva cuota para todos los socios activos del club.</p>
+
+        <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <div class="field">
+            <div class="control">
+              <button type="submit" class="button is-primary is-fullwidth">Generar Cuotas</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

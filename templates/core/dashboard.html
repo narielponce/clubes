@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - {{ club.name }}{% endblock %}
+
+{% block content %}
+  <h1 class="title">Dashboard: {{ club.name }}</h1>
+  <h2 class="subtitle">Resumen del estado actual del club.</h2>
+  <hr>
+
+  <div class="tile is-ancestor">
+    <div class="tile is-parent">
+      <article class="tile is-child box has-background-info-light">
+        <p class="title">{{ active_members_count }}</p>
+        <p class="subtitle">Socios Activos</p>
+      </article>
+    </div>
+    <div class="tile is-parent">
+      <article class="tile is-child box has-background-warning-light">
+        <p class="title">{{ pending_fees_count }}</p>
+        <p class="subtitle">Cuotas Pendientes</p>
+      </article>
+    </div>
+    <div class="tile is-parent">
+      <article class="tile is-child box has-background-success-light">
+        <p class="title">$0</p>
+        <p class="subtitle">Ingresos del Mes</p>
+      </article>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="menu">
+    <p class="menu-label">
+      Acciones
+    </p>
+    <ul class="menu-list">
+      <li><a href="{% url 'generate_fees' club_slug=club.subdomain %}">Generar Cuotas Masivas</a></li>
+      <li><a href="{% url 'member_list' club_slug=club.subdomain %}">Administrar Socios</a></li>
+      <li><a>Registrar Pago</a></li>
+    </ul>
+  </div>
+
+{% endblock %}
