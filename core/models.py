@@ -16,6 +16,12 @@ class Club(models.Model):
         help_text="Subdominio único para el club (ej: 'mi-club')."
     )
     is_active = models.BooleanField(default=True, verbose_name="Activo")
+    base_membership_fee = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0.00,
+        verbose_name="Cuota Societaria Base"
+    )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Última Actualización")
 
@@ -23,6 +29,29 @@ class Club(models.Model):
         verbose_name = "Club"
         verbose_name_plural = "Clubes"
         ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
+class Activity(models.Model):
+    """
+    Representa una actividad o servicio ofrecido por un Club.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    club = models.ForeignKey(Club, on_delete=models.CASCADE, related_name='activities', verbose_name="Club")
+    name = models.CharField(max_length=255, verbose_name="Nombre de la Actividad")
+    description = models.TextField(blank=True, verbose_name="Descripción")
+    cost = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Costo Mensual")
+    is_active = models.BooleanField(default=True, verbose_name="Activa")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Actividad"
+        verbose_name_plural = "Actividades"
+        ordering = ['name']
+        unique_together = ('club', 'name')
 
     def __str__(self):
         return self.name
@@ -63,6 +92,12 @@ class Member(models.Model):
         blank=True, 
         related_name='member_profile',
         verbose_name="Cuenta de Usuario"
+    )
+    activities = models.ManyToManyField(
+        'Activity',
+        related_name='members',
+        blank=True,
+        verbose_name="Actividades"
     )
 
     class Meta:

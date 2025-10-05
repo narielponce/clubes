@@ -64,6 +64,15 @@
         </div>
       </div>
 
+      <div class="field">
+        <label class="label">Actividades</label>
+        <div class="control">
+          <div class="select is-multiple">
+            {{ form.activities }}
+          </div>
+        </div>
+      </div>
+
       {% if form.errors %}
         <div class="notification is-danger is-light">
           <strong>Por favor, corrige los siguientes errores:</strong>

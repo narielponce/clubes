@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if object %}Editar Actividad{% else %}Nueva Actividad{% endif %} - {{ club.name }}{% endblock %}
+
+{% block content %}
+  <h1 class="title">{% if object %}Editar Actividad{% else %}Agregar Nueva Actividad{% endif %}</h1>
+  <h2 class="subtitle">Club: {{ club.name }}</h2>
+
+  <div class="box">
+    <form method="post">
+      {% csrf_token %}
+      
+      <div class="field">
+        <label class="label">Nombre de la Actividad</label>
+        <div class="control">
+          {{ form.name }}
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Descripción</label>
+        <div class="control">
+          {{ form.description }}
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Costo Mensual</label>
+        <div class="control">
+          {{ form.cost }}
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Activa</label>
+        <div class="control">
+          {{ form.is_active }}
+        </div>
+      </div>
+
+      {% if form.errors %}
+        <div class="notification is-danger is-light">
+          <strong>Por favor, corrige los siguientes errores:</strong>
+          <ul>
+          {% for field, errors in form.errors.items %}
+            <li><strong>{{ field }}:</strong> {{ errors|join:", " }}</li>
+          {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      <hr>
+
+      <div class="field is-grouped">
+        <div class="control">
+          <button type="submit" class="button is-success">Guardar Actividad</button>
+        </div>
+        <div class="control">
+          <a href="{% url 'activity_list' club_slug=club.subdomain %}" class="button is-light">Cancelar</a>
+        </div>
+      </div>
+    </form>
+  </div>
+
+{% endblock %}

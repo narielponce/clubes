@@ -9,7 +9,7 @@ from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.db.models import Max
 
 from .forms import GenerateFeesForm
-from .models import Member, Fee, Club
+from .models import Member, Fee, Club, Activity
 from users.models import Membership
 
 # --- Mixins de Seguridad y Contexto ---
@@ -95,15 +95,126 @@ class GenerateFeesView(AdminRequiredMixin, FormView):
     def form_valid(self, form):
         club = self.request.club
         data = form.cleaned_data
+        period = data['period']
+        due_date = data['due_date']
+
         active_members = Member.objects.filter(club=club, status=Member.STATUS_ACTIVE)
         if not active_members.exists():
             messages.warning(self.request, f"No se encontraron socios activos en el club {club.name}.")
             return super().form_valid(form)
 
-        fees_to_create = [Fee(member=member, description=data['description'], amount=data['amount'], period=data['period'], due_date=data['due_date']) for member in active_members]
-        Fee.objects.bulk_create(fees_to_create)
-        messages.success(self.request, f"¡Éxito! Se generaron {len(fees_to_create)} cuotas para el club {club.name}.")
+        fees_to_create = []
+        month_year = period.strftime("%B %Y")
+
+        for member in active_members:
+            # 1. Cuota Societaria Base
+            if club.base_membership_fee > 0:
+                fees_to_create.append(
+                    Fee(
+                        member=member,
+                        description=f"Cuota Societaria - {month_year}",
+                        amount=club.base_membership_fee,
+                        period=period,
+                        due_date=due_date
+                    )
+                )
+            
+            # 2. Cuotas por Actividad
+            for activity in member.activities.filter(is_active=True):
+                fees_to_create.append(
+                    Fee(
+                        member=member,
+                        description=f"Cuota Actividad: {activity.name} - {month_year}",
+                        amount=activity.cost,
+                        period=period,
+                        due_date=due_date
+                    )
+                )
+
+        if fees_to_create:
+            Fee.objects.bulk_create(fees_to_create)
+            messages.success(
+                self.request,
+                f"¡Éxito! Se generaron {len(fees_to_create)} cuotas para el club {club.name}."
+            )
+        else:
+            messages.info(self.request, f"No se generaron cuotas para el club {club.name}. Asegúrate de que hay socios activos, cuota societaria base o actividades activas con costo.")
+
         return super().form_valid(form)
+
+
+# --- Vistas para la Gestión de Actividades ---
+
+class ActivityListView(AdminRequiredMixin, ListView):
+    model = Activity
+    template_name = 'core/activity_list.html'
+    context_object_name = 'activities'
+
+    def get_queryset(self):
+        return Activity.objects.filter(club=self.request.club)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['club'] = self.request.club
+        return context
+
+
+class ActivityCreateView(AdminRequiredMixin, CreateView):
+    model = Activity
+    template_name = 'core/activity_form.html'
+    fields = ['name', 'description', 'cost', 'is_active']
+
+    def get_success_url(self):
+        return reverse_lazy('activity_list', kwargs={'club_slug': self.request.club.subdomain})
+
+    def form_valid(self, form):
+        form.instance.club = self.request.club
+        messages.success(self.request, "Actividad creada con éxito.")
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['club'] = self.request.club
+        return context
+
+
+class ActivityUpdateView(AdminRequiredMixin, UpdateView):
+    model = Activity
+    template_name = 'core/activity_form.html'
+    fields = ['name', 'description', 'cost', 'is_active']
+
+    def get_queryset(self):
+        return Activity.objects.filter(club=self.request.club)
+
+    def get_success_url(self):
+        return reverse_lazy('activity_list', kwargs={'club_slug': self.request.club.subdomain})
+
+    def form_valid(self, form):
+        messages.success(self.request, "Actividad actualizada con éxito.")
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['club'] = self.request.club
+        return context
+
+
+class ActivityDeleteView(AdminRequiredMixin, DeleteView):
+    model = Activity
+    template_name = 'core/activity_confirm_delete.html'
+    context_object_name = 'activity'
+
+    def get_queryset(self):
+        return Activity.objects.filter(club=self.request.club)
+
+    def get_success_url(self):
+        return reverse_lazy('activity_list', kwargs={'club_slug': self.request.club.subdomain})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['club'] = self.request.club
+        return context
+
 
 # --- Vistas para la Gestión de Socios ---
 
@@ -123,7 +234,7 @@ class MemberListView(AdminRequiredMixin, ListView):
 class MemberCreateView(AdminRequiredMixin, CreateView):
     model = Member
     template_name = 'core/member_form.html'
-    fields = ['first_name', 'last_name', 'email', 'phone_number', 'birth_date', 'join_date', 'status']
+    fields = ['first_name', 'last_name', 'email', 'phone_number', 'birth_date', 'join_date', 'status', 'activities']
 
     def get_success_url(self):
         return reverse_lazy('member_list', kwargs={'club_slug': self.request.club.subdomain})
@@ -145,7 +256,7 @@ class MemberCreateView(AdminRequiredMixin, CreateView):
 class MemberUpdateView(AdminRequiredMixin, UpdateView):
     model = Member
     template_name = 'core/member_form.html'
-    fields = ['first_name', 'last_name', 'email', 'phone_number', 'birth_date', 'join_date', 'status']
+    fields = ['first_name', 'last_name', 'email', 'phone_number', 'birth_date', 'join_date', 'status', 'activities']
 
     def get_queryset(self):
         return Member.objects.filter(club=self.request.club)

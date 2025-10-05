@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Actividades - {{ club.name }}{% endblock %}
+
+{% block content %}
+  <h1 class="title">Gestión de Actividades de {{ club.name }}</h1>
+  <h2 class="subtitle">Listado de todas las actividades ofrecidas por el club.</h2>
+  
+  <a href="{% url 'activity_create' club_slug=club.subdomain %}" class="button is-success mb-4">+ Agregar Actividad</a>
+
+  <div class="box">
+    <table class="table is-fullwidth is-striped is-hoverable">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Costo Mensual</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for activity in activities %}
+          <tr>
+            <td>{{ activity.name }}</td>
+            <td>${{ activity.cost }}</td>
+            <td>
+              <span class="tag is-light is-medium {% if activity.is_active %}is-success{% else %}is-danger{% endif %}">
+                {% if activity.is_active %}Activa{% else %}Inactiva{% endif %}
+              </span>
+            </td>
+            <td>
+              <div class="buttons are-small">
+                <a href="{% url 'activity_update' club_slug=club.subdomain pk=activity.pk %}" class="button is-info">Editar</a>
+                <a href="{% url 'activity_delete' club_slug=club.subdomain pk=activity.pk %}" class="button is-danger">Eliminar</a>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4" class="has-text-centered">No hay actividades registradas en este club.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <a href="{% url 'dashboard' club_slug=club.subdomain %}" class="button is-light mt-4">Volver al Dashboard</a>
+{% endblock %}

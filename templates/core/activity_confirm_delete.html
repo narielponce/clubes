@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirmar Eliminación de Actividad - {{ club.name }}{% endblock %}
+
+{% block content %}
+  <h1 class="title">Eliminar Actividad</h1>
+  <h2 class="subtitle">Club: {{ club.name }}</h2>
+
+  <div class="box">
+    <p class="mb-4">¿Estás seguro de que quieres eliminar la actividad <strong>{{ activity.name }}</strong>? Esta acción no se puede deshacer.</p>
+
+    <form method="post">
+      {% csrf_token %}
+      
+      <div class="field is-grouped">
+        <div class="control">
+          <button type="submit" class="button is-danger">Confirmar Eliminación</button>
+        </div>
+        <div class="control">
+          <a href="{% url 'activity_list' club_slug=club.subdomain %}" class="button is-light">Cancelar</a>
+        </div>
+      </div>
+    </form>
+  </div>
+
+{% endblock %}
